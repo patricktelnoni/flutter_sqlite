@@ -29,6 +29,27 @@ class DatabaseHandler {
     return result;
   }
 
+  Future<void> deleteUser(int? id) async {
+    final Database db = await initializeDB();
+    await db.delete(
+      'users',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> updateUser(User user) async {
+    int result = 0;
+    final Database db = await initializeDB();
+    result = await db.update(
+      'users',
+      user.toMap(),
+      where: "id = ?",
+      whereArgs: [user.id],
+    );
+    return result;
+  }
+
   Future<List<User>> retrieveUsers() async {
     final Database db = await initializeDB();
     final List<Map<String, Object?>> queryResult = await db.query('users');

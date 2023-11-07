@@ -10,7 +10,8 @@ class User {
         required this.name,
         required this.age,
         required this.country,
-        this.email});
+        this.email
+      });
 
   User.fromMap(Map<String, dynamic> res)
       : id      = res["id"],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqlite/edit_form.dart';
 import 'sqlite_service.dart';
 import 'package:sqlite/models/user.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
 
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -49,10 +50,19 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<int> addUsers() async {
     User firstUser  = User(name: "peter", age: 24, country: "Lebanon");
     User secondUser = User(name: "john", age: 31, country: "United Kingdom");
+    User thirdUser = User(name: "mark", age: 28, country: "Canada");
 
-    List<User> listOfUsers = [firstUser, secondUser];
+    List<User> listOfUsers = [firstUser, secondUser, thirdUser];
 
     return await this.handler.insertUser(listOfUsers);
+  }
+
+  void editData(User userEdit) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>
+            EditPage(user: userEdit))
+    );
   }
 
   @override
@@ -78,12 +88,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Icon(Icons.delete_forever),
                   ),
                   key: ValueKey<int>(snapshot.data![index].id!),
-                  child: Card(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(8.0),
-                        title: Text(snapshot.data![index].name),
-                        subtitle: Text(snapshot.data![index].country),
-                      )),
+                  child: Column(
+                    children: <Widget>[
+                      Card(
+                          child: ListTile(
+                            contentPadding: EdgeInsets.all(8.0),
+                            title: Text(snapshot.data![index].name),
+                            subtitle: Text(snapshot.data![index].country),
+                            onTap: () => editData(snapshot.data![index]),
+                          )
+                      ),
+                    ],
+                  ),
+                  onDismissed: (DismissDirection direction) async{
+                      await this.handler.deleteUser(snapshot.data![index].id);
+                  },
+
                 );
               },
             );
